@@ -33,9 +33,9 @@ class MiniCPM_V_2_6_Int4_Handler:
                 logger.info("Dependencies were installed or updated. Please restart ComfyUI for changes to take effect.")
             cls.dependencies_checked = True
 
-    def load_model(self):
+    def load_model(self,device):
         self.check_dependencies()
-        
+         
         if not os.path.exists(self.local_path) or not os.listdir(self.local_path):
             logger.info(f"Model not found locally. Downloading {self.name} from Hugging Face...")
             try:
@@ -54,7 +54,7 @@ class MiniCPM_V_2_6_Int4_Handler:
                     self.local_path,
                     trust_remote_code=True,
                     low_cpu_mem_usage=True
-                )
+                ).to(device)  # 加载到指定设备上
                 
                 self.model = self.model.eval()
                 # logger.info(f"Model {self.name} loaded successfully.")
@@ -112,7 +112,8 @@ class MiniCPM_V_2_6_Int4:
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "required": {
+            "required": { 
+                "device": (["cuda","cuda:1", "cuda:0"], { "default": "cuda:1",},),
                 "max_new_tokens": ("INT", {"default": 300, "min": 1, "max": 3000}),
                 "temperature": ("FLOAT", {"default": 0.5, "min": 0.1, "max": 2.0, "step": 0.1}),
                 "top_p": ("FLOAT", {"default": 0.8, "min": 0.1, "max": 1.0, "step": 0.1}),
@@ -142,7 +143,7 @@ class MiniCPM_V_2_6_Int4:
             torch.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
 
-        self.model_handler.load_model()
+        self.model_handler.load_model(device)
 
         msgs = []
 
