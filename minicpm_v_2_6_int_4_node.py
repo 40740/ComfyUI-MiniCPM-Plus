@@ -133,7 +133,7 @@ class MiniCPM_V_2_6_Int4:
     FUNCTION = "generate"
     CATEGORY = "MiniCPM"
 
-    def generate(self, max_new_tokens, temperature, top_p, top_k, seed, extract_keywords, image=None, user_promptA=None, user_promptB=None):
+    def generate(self,device, max_new_tokens, temperature, top_p, top_k, seed, extract_keywords, image=None, user_promptA=None, user_promptB=None):
         if user_promptA is None:
             user_promptA = ""
         if user_promptB is None:
