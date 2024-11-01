@@ -53,8 +53,9 @@ class MiniCPM_V_2_6_Int4_Handler:
                 self.model = AutoModel.from_pretrained(
                     self.local_path,
                     trust_remote_code=True,
-                    low_cpu_mem_usage=True
-                ).to(device)  # 加载到指定设备上
+                    low_cpu_mem_usage=True,
+                    device_map={"": device}  # 使用 device_map 指定设备
+                )
                 
                 self.model = self.model.eval()
                 # logger.info(f"Model {self.name} loaded successfully.")
